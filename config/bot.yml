@@ -1,5 +1,5 @@
-games: ['ONLINE:0:Gouvermental opinon manipulation tool (GOMT)!', 'ONLINE:0:With his
-    big brother Hawk!', 'ONLINE:3:Your opinons!', 'ONLINE:2:To music from rmcprod!']
+games: ['ONLINE:0:Governmental opinon manipulation tool (GOMT)!', 'ONLINE:0:With his
+    big brother Hawk!', 'ONLINE:3:Your opinions!', 'ONLINE:2:To music from rmcprod!']
 regnum: {host: 'ws://localhost:7001/ws', token: SUPER-SECRET-TOKEN}
 cassandra:
   keyspace: test

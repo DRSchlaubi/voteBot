@@ -49,4 +49,8 @@ public class Utils {
         return message.getChannel().removeReactionById(messageId, emote);
     }
 
+    public static String translateBoolean(boolean b) {
+        return b ? "phrases.enabled" : "phrases.disabled";
+    }
+
 }
