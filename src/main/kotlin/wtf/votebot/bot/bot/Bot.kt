@@ -17,16 +17,6 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.core
+package wtf.votebot.bot.bot
 
-interface VoteBot {
-
-    fun run()
-
-    /* //TODo we need that?
-    companion object {
-        fun builder() : String {
-            return "abc"
-        }
-    }*/
-}
+interface Bot

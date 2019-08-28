@@ -27,8 +27,14 @@ import kotlin.system.exitProcess
 class ConfigChangeListener : ConfigurationChangeListener {
 
     private val log = FluentLogger.forEnclosingClass()
+    private var initializationDone = false
 
     override fun onConfigurationChanged(parser: ConfigurationParser, newConfiguration: String) {
+        if (!initializationDone) {
+            initializationDone = true
+            log.atInfo().log("Config loaded.")
+            return
+        }
         log.atWarning().log("Config got updated. Restart...")
         exitProcess(0)
     }

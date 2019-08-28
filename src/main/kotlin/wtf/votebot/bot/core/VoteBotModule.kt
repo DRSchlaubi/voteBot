@@ -19,14 +19,9 @@
 
 package wtf.votebot.bot.core
 
-interface VoteBot {
+import dev.misfitlabs.kotlinguice4.KotlinModule
 
-    fun run()
-
-    /* //TODo we need that?
-    companion object {
-        fun builder() : String {
-            return "abc"
-        }
-    }*/
+class VoteBotModule : KotlinModule() {
+    override fun configure() {
+    }
 }

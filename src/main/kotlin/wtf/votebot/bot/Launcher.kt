@@ -26,13 +26,16 @@ import com.orbitz.consul.Consul
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import wtf.votebot.bot.core.VoteBot
 import wtf.votebot.bot.io.ConfigBuilder
 import wtf.votebot.bot.io.ConfigChangeListener
-import java.lang.RuntimeException
 
 
 fun main(args: Array<String>) {
+    // Use the slf4j backend for flogger
+    System.setProperty(
+        "flogger.backend_factory",
+        "com.google.common.flogger.backend.slf4j.Slf4jBackendFactory#getInstance"
+    )
 
     val log = FluentLogger.forEnclosingClass()
 
@@ -45,17 +48,18 @@ fun main(args: Array<String>) {
     val config = ConfigBuilder()
     config.devEnabled = devEnabled
 
-
     if (devEnabled) {
         log.atInfo().log("Launching in developer mode!")
-        return VoteBot(config.build(), null).run()
+        return
     }
 
     val client = Consul.builder().build()
-    val configCatKey = client.keyValueClient().getValueAsString("configcat_key")
-        .orElseThrow { RuntimeException("ConfigCat not found or empty. Please make sure you added a ConfigCat key" +
+    val configCatKey = client.keyValueClient().getValueAsString("configcat/key")
+        .orElseThrow {
+            RuntimeException(
+                "ConfigCat key not found or empty. Please make sure you added a ConfigCat key" +
                 " to Consul or enable developer mode") }
-    val configCatClient = ConfigCatClient.newBuilder()
+    ConfigCatClient.newBuilder()
         .refreshPolicy { configFetcher, cache ->
             AutoPollingPolicy.newBuilder()
                 .autoPollIntervalInSeconds(60)
