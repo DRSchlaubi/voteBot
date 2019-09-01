@@ -17,10 +17,11 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot
 
-enum class Environment(val key: String) {
-    DEVELOPMENT("development"),
-    STAGING("staging"),
-    PRODUCTION("production")
+class ApplicationInfo {
+    companion object {
+        // TODO const val RELEASE = "@RELEASE@"
+        const val RELEASE = "IDK-0.9999.9.9"
+    }
 }

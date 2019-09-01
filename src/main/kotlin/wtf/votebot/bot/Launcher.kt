@@ -62,8 +62,9 @@ fun main(args: Array<String>) {
         exitProcess(0)
     }
 
-    if (!Files.exists(Path.of(".env")))
+    if (!Files.exists(Path.of(".env"))) {
         throw StartupError("Place make sure you placed a .env file in the bot's root directory.")
+    }
 
     // Load Config
     val configBackend = cli.getOptionObject("config")
@@ -72,6 +73,8 @@ fun main(args: Array<String>) {
 
     // Initialize Sentry
     Sentry.init(config.sentryDSN)
+    Sentry.getStoredClient().environment = config.environment
+    Sentry.getStoredClient().release = ApplicationInfo.RELEASE
 }
 
 /**

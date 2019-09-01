@@ -35,7 +35,11 @@ class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : 
     init {
         if (configCatKey == null) {
             log.atSevere()
-                .log("ConfigCat API key is not set as environment variable. Please make sure you set it or enable the environment variable configuration backend.")
+                .log(
+                    "ConfigCat API key is not set as environment variable." +
+                            "Please make sure you set it or enable the environment" +
+                            "variable configuration backend."
+                )
             exitProcess(1)
         }
         val client = ConfigCatClient.newBuilder()
