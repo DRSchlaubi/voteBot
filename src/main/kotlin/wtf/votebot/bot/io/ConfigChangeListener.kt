@@ -35,7 +35,10 @@ class ConfigChangeListener : ConfigurationChangeListener {
             log.atInfo().log("Config loaded.")
             return
         }
-        log.atWarning().log("Config got updated. Restart...")
-        exitProcess(0)
+        log.atInfo().log("Config got updated.")
+        if (parser.parseValue(String::class.java, newConfiguration, "environment") != "development") {
+            log.atWarning().log("Restart...")
+            exitProcess(0)
+        }
     }
 }

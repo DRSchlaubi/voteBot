@@ -17,9 +17,12 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
-interface Config {
-    val devEnabled: Boolean
-    val discordToken: String
+class EnvConfig : Config {
+    private val baseKey = "BOT_"
+
+    override val environment: String = System.getenv("${baseKey}ENVIRONMENT")
+    override val sentryDSN: String = System.getenv("${baseKey}SENTRY_DSN")
+    override val discordToken: String = System.getenv("${baseKey}DISCORD_TOKEN")
 }

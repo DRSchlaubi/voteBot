@@ -17,6 +17,26 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
-class ImmutableConfig(override val devEnabled: Boolean, override val discordToken: String) : Config
+interface Config {
+    val environment: String
+    val sentryDSN: String
+    val discordToken: String
+
+    fun development(): Boolean {
+        return environmentType() == Environment.DEVELOPMENT
+    }
+
+    fun staging(): Boolean {
+        return environmentType() == Environment.STAGING
+    }
+
+    fun production(): Boolean {
+        return environmentType() == Environment.PRODUCTION
+    }
+
+    fun environmentType(): Environment {
+        return Environment.valueOf(environment.toLowerCase())
+    }
+}

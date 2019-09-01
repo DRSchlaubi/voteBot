@@ -17,15 +17,10 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
-class ConfigBuilder {
-
-    var devEnabled = false
-
-    var discordToken = ""
-
-    fun build(): Config {
-        return ImmutableConfig(devEnabled, discordToken)
-    }
+enum class Environment(val key: String) {
+    DEVELOPMENT("development"),
+    STAGING("staging"),
+    PRODUCTION("production")
 }

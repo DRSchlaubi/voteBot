@@ -19,52 +19,30 @@
 
 package wtf.votebot.bot
 
-import com.configcat.AutoPollingPolicy
-import com.configcat.ConfigCatClient
 import com.google.common.flogger.FluentLogger
-import com.orbitz.consul.Consul
+import io.sentry.Sentry
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import wtf.votebot.bot.io.ConfigBuilder
-import wtf.votebot.bot.io.ConfigChangeListener
-
+import wtf.votebot.bot.config.ConfigCatConfig
+import wtf.votebot.bot.config.EnvConfig
 
 fun main(args: Array<String>) {
-    // Use the slf4j backend for flogger
     System.setProperty(
         "flogger.backend_factory",
         "com.google.common.flogger.backend.slf4j.Slf4jBackendFactory#getInstance"
     )
-
     val log = FluentLogger.forEnclosingClass()
 
-    // CLI
+    // Parse CLI flags
     val options = Options()
-        .addOption(Option("D", "dev", false, "Enabled developer mode"))
+        .addOption(Option("C", "config", true, "Configure the configuration backend."))
     val cli = DefaultParser().parse(options, args)
 
-    val devEnabled = cli.hasOption("dev")
-    val config = ConfigBuilder()
-    config.devEnabled = devEnabled
+    // Load Config
+    val configBackend = cli.getOptionObject("config")
+    val config = if (configBackend == "env") EnvConfig() else ConfigCatConfig()
 
-    if (devEnabled) {
-        log.atInfo().log("Launching in developer mode!")
-        return
-    }
-
-    val client = Consul.builder().build()
-    val configCatKey = client.keyValueClient().getValueAsString("configcat/key")
-        .orElseThrow {
-            RuntimeException(
-                "ConfigCat key not found or empty. Please make sure you added a ConfigCat key" +
-                " to Consul or enable developer mode") }
-    ConfigCatClient.newBuilder()
-        .refreshPolicy { configFetcher, cache ->
-            AutoPollingPolicy.newBuilder()
-                .autoPollIntervalInSeconds(60)
-                .configurationChangeListener(ConfigChangeListener())
-                .build(configFetcher, cache)
-        }
-        .build(configCatKey)
+    // Initialize Sentry
+    Sentry.init(config.sentryDSN)
 }

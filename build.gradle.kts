@@ -50,6 +50,7 @@ dependencies {
     implementation("com.configcat", "configcat-java-client", "1.2.0")
     implementation("commons-cli", "commons-cli", "1.4")
     implementation("com.discord4j", "discord4j-core", "3.0.8")
+    implementation("io.sentry", "sentry", "1.7.27")
 
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
