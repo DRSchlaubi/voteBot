@@ -19,14 +19,14 @@
 
 package wtf.votebot.bot.core
 
-interface VoteBot {
+import wtf.votebot.bot.config.Config
 
-    fun run()
+class VoteBot(private val config: Config) {
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread(this::shutdown))
+    }
 
-    /* //TODo we need that?
-    companion object {
-        fun builder() : String {
-            return "abc"
-        }
-    }*/
+    private fun shutdown() {
+        TODO("Add shutdown hook")
+    }
 }

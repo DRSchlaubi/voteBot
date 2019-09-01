@@ -19,18 +19,18 @@
   -->
 
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  name="Custom ruleset"
-  xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-  xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+         name="Custom ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
-  <description>
-    This ruleset checks my code for bad stuff
-  </description>
+    <description>
+        This ruleset checks my code for bad stuff
+    </description>
 
-  <rule ref="category/java/bestpractices.xml"/>
+    <rule ref="category/java/bestpractices.xml"/>
 
-  <rule ref="category/java/design.xml">
-    <exclude name="LawOfDemeter"/>
-  </rule>
+    <rule ref="category/java/design.xml">
+        <exclude name="LawOfDemeter"/>
+    </rule>
 
 </ruleset>

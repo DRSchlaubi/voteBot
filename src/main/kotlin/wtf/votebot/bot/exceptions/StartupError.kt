@@ -17,11 +17,14 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.core
+package wtf.votebot.bot.exceptions
 
-import dev.misfitlabs.kotlinguice4.KotlinModule
-
-class VoteBotModule : KotlinModule() {
-    override fun configure() {
-    }
-}
+/**
+ * [Error] that indicates an issue during the startup of the bot.
+ */
+class StartupError @JvmOverloads constructor(
+    message: String?,
+    cause: Throwable? = null,
+    enableSuppression: Boolean = false,
+    writableStackTrace: Boolean = true
+) : Error(message, cause, enableSuppression, writableStackTrace)

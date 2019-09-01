@@ -25,6 +25,7 @@ plugins {
     checkstyle
     id("com.github.spotbugs") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("io.gitlab.arturbosch.detekt") version "1.0.1"
     java
     application
     kotlin("jvm") version "1.3.50"
@@ -41,8 +42,8 @@ repositories {
 dependencies {
 
     implementation("com.google.flogger", "flogger", "0.4")
-    implementation("com.google.flogger", "flogger-slf4j-backend", "0.4")
     implementation("com.google.flogger", "flogger-system-backend", "0.4")
+    runtime("com.google.flogger", "flogger-slf4j-backend", "0.4")
     implementation("ch.qos.logback", "logback-classic", "1.2.3")
     implementation("com.google.inject", "guice", "4.1.0")
     implementation("dev.misfitlabs.kotlinguice4", "kotlin-guice", "1.4.0")
@@ -51,7 +52,10 @@ dependencies {
     implementation("commons-cli", "commons-cli", "1.4")
     implementation("com.discord4j", "discord4j-core", "3.0.8")
     implementation("io.sentry", "sentry", "1.7.27")
+    implementation("io.sentry", "sentry-logback", "1.7.27")
+    implementation("io.github.cdimascio", "java-dotenv", "5.1.1")
 
+    detektPlugins("io.gitlab.arturbosch.detekt", "detekt-formatting", "1.0.1")
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
 }
@@ -90,6 +94,11 @@ tasks {
         ignoreFailures = true
         ruleSetConfig = resources.text.fromFile(file("${rootProject.projectDir}/config/pmd/ruleset.xml"))
     }
+}
+
+detekt {
+    input = files("src/main/kotlin")
+    autoCorrect = true
 }
 
 application {

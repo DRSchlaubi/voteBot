@@ -19,10 +19,42 @@
 
 package wtf.votebot.bot.config
 
-class EnvConfig : Config {
-    private val baseKey = "BOT_"
+import io.github.cdimascio.dotenv.dotenv
+import wtf.votebot.bot.exceptions.StartupError
 
-    override val environment: String = System.getenv("${baseKey}ENVIRONMENT")
-    override val sentryDSN: String = System.getenv("${baseKey}SENTRY_DSN")
-    override val discordToken: String = System.getenv("${baseKey}DISCORD_TOKEN")
+class EnvConfig : Config {
+
+    private val dotenv = dotenv()
+
+    override val environment: String
+        get() = dotenv[ENVIRONMENT] ?: notFound(ENVIRONMENT)
+    override val sentryDSN: String
+        get() = dotenv[SENTRY_DSN] ?: notFound(SENTRY_DSN)
+    override val discordToken: String
+        get() = dotenv[DISCORD_TOKEN] ?: notFound(DISCORD_TOKEN)
+
+    /**
+     * Throws an exception if there is a missing key in the .env file.
+     */
+    private fun notFound(option: String): Nothing = throw StartupError(
+        "Could not find $option in .env file." +
+                "Please make sure to include all options from the example"
+    )
+
+    companion object {
+        private const val BASE = "BOT_"
+
+        /**
+         * Environment variable key for the bot environment.
+         */
+        const val ENVIRONMENT = "${BASE}ENVIRONMENT"
+        /**
+         * Environment variable key for the Discord API token.
+         */
+        const val DISCORD_TOKEN = "${BASE}DISCORD_TOKEN"
+        /**
+         * Environment variable key for the sentry dsn.
+         */
+        const val SENTRY_DSN = "${BASE}SENTRY_DSN"
+    }
 }

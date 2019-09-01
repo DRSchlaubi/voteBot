@@ -17,14 +17,17 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
 import com.configcat.ConfigurationChangeListener
 import com.configcat.ConfigurationParser
 import com.google.common.flogger.FluentLogger
 import kotlin.system.exitProcess
 
-class ConfigChangeListener : ConfigurationChangeListener {
+/**
+ * An implementation of [ConfigurationChangeListener] that restarts the bot whenever the config changes.
+ */
+class ConfigChangeRestartListener : ConfigurationChangeListener {
 
     private val log = FluentLogger.forEnclosingClass()
     private var initializationDone = false

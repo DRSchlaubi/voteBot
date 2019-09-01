@@ -22,10 +22,10 @@ package wtf.votebot.bot.config
 import com.configcat.AutoPollingPolicy
 import com.configcat.ConfigCatClient
 import com.google.common.flogger.FluentLogger
-import wtf.votebot.bot.io.ConfigChangeListener
+import io.github.cdimascio.dotenv.dotenv
 import kotlin.system.exitProcess
 
-class ConfigCatConfig(configCatKey: String? = System.getenv("BOT_CONFIG_CAT_KEY")) : Config {
+class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : Config {
     private val log = FluentLogger.forEnclosingClass()
 
     override val environment: String
@@ -34,14 +34,15 @@ class ConfigCatConfig(configCatKey: String? = System.getenv("BOT_CONFIG_CAT_KEY"
 
     init {
         if (configCatKey == null) {
-            log.atSevere().log("ConfigCat API key is not set. Please make sure you set it or enable the environment variable configuration backend.")
+            log.atSevere()
+                .log("ConfigCat API key is not set as environment variable. Please make sure you set it or enable the environment variable configuration backend.")
             exitProcess(1)
         }
         val client = ConfigCatClient.newBuilder()
             .refreshPolicy { configFetcher, cache ->
                 AutoPollingPolicy.newBuilder()
                     .autoPollIntervalInSeconds(60)
-                    .configurationChangeListener(ConfigChangeListener())
+                    .configurationChangeListener(ConfigChangeRestartListener())
                     .build(configFetcher, cache)
             }
             .build(configCatKey)
