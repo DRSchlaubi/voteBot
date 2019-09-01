@@ -52,7 +52,6 @@ fun main(args: Array<String>) {
     System.setProperty(
         "flogger.backend_factory",
         "com.google.common.flogger.backend.slf4j.Slf4jBackendFactory#getInstance"
-        //"wtf.votebot.bot.logging.LogbackBackendFactory#getInstance"
     )
     val log = FluentLogger.forEnclosingClass()
 
