@@ -54,6 +54,7 @@ dependencies {
     implementation("io.sentry", "sentry", "1.7.27")
     implementation("io.sentry", "sentry-logback", "1.7.27")
     implementation("io.github.cdimascio", "java-dotenv", "5.1.1")
+    implementation("io.ktor:ktor-server-netty:1.2.3")
 
     detektPlugins("io.gitlab.arturbosch.detekt", "detekt-formatting", "1.0.1")
     implementation(kotlin("stdlib-jdk8"))

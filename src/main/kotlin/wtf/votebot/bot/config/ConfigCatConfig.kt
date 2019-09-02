@@ -31,6 +31,8 @@ class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : 
     override val environment: String
     override val sentryDSN: String
     override val discordToken: String
+    override val serviceName: String
+    override val httpPort: String
 
     init {
         if (configCatKey == null) {
@@ -53,5 +55,7 @@ class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : 
         environment = client.getValue(String::class.java, "environment", "production")
         sentryDSN = client.getValue(String::class.java, "sentry_dsn", null)
         discordToken = client.getValue(String::class.java, "discord_token", null)
+        serviceName = client.getValue(String::class.java, "service_name", "bot")
+        httpPort = client.getValue(String::class.java, "http_port", "3245")
     }
 }

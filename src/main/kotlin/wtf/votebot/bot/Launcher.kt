@@ -20,6 +20,9 @@
 package wtf.votebot.bot
 
 import com.google.common.flogger.FluentLogger
+import io.ktor.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.sentry.Sentry
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
@@ -29,6 +32,8 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import wtf.votebot.bot.config.ConfigCatConfig
 import wtf.votebot.bot.config.EnvConfig
+import wtf.votebot.bot.core.ServiceRegistry
+import wtf.votebot.bot.core.module
 import wtf.votebot.bot.exceptions.StartupError
 import java.nio.file.Files
 import java.nio.file.Path
@@ -45,6 +50,12 @@ private val options = Options()
         Option.builder("H")
             .longOpt("help")
             .desc("Display a list of all CLI options")
+            .build()
+    )
+    .addOption(
+        Option.builder("FSR")
+            .longOpt("force-service-registry")
+            .desc("Forces the service to use a service registry (also development)")
             .build()
     )
 
@@ -75,6 +86,15 @@ fun main(args: Array<String>) {
     Sentry.init(config.sentryDSN)
     Sentry.getStoredClient().environment = config.environment
     Sentry.getStoredClient().release = ApplicationInfo.RELEASE
+
+    // WebServer
+    // TODO: Extract variable and pass around
+    embeddedServer(Netty, config.httpPort.toInt(), module = Application::module).start()
+
+    // Service Registry
+    if (!config.development() || cli.hasOption("FSR")) {
+        ServiceRegistry(config.serviceName, config.httpPort)
+    }
 }
 
 /**
@@ -85,7 +105,7 @@ private fun parseCliOptions(args: Array<String>): CommandLine {
     try {
         cli = DefaultParser().parse(options, args)
     } catch (e: ParseException) {
-       FluentLogger.forEnclosingClass().atSevere().withCause(e).log("Could not parse CLI options")
+        FluentLogger.forEnclosingClass().atSevere().withCause(e).log("Could not parse CLI options")
         sendHelp()
         exitProcess(1)
     }

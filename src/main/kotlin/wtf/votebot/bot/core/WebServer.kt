@@ -17,28 +17,22 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot.core
 
-interface Config {
-    val environment: String
-    val sentryDSN: String
-    val discordToken: String
-    val serviceName: String
-    val httpPort: String
+import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.features.CallLogging
+import io.ktor.features.DefaultHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.routing.Routing
+import io.ktor.routing.get
 
-    fun development(): Boolean {
-        return environmentType() == Environment.DEVELOPMENT
-    }
-
-    fun staging(): Boolean {
-        return environmentType() == Environment.STAGING
-    }
-
-    fun production(): Boolean {
-        return environmentType() == Environment.PRODUCTION
-    }
-
-    fun environmentType(): Environment {
-        return Environment.valueOf(environment.toUpperCase())
+fun Application.module() {
+    install(DefaultHeaders)
+    install(CallLogging)
+    install(Routing) {
+        get("/") {
+            context.response.status(HttpStatusCode.OK)
+        }
     }
 }
