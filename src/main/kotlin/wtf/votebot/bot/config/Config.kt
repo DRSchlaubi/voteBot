@@ -26,19 +26,11 @@ interface Config {
     val serviceName: String
     val httpPort: String
 
-    fun development(): Boolean {
-        return environmentType() == Environment.DEVELOPMENT
-    }
+    fun development() = environmentType() == Environment.DEVELOPMENT
 
-    fun staging(): Boolean {
-        return environmentType() == Environment.STAGING
-    }
+    fun staging() = environmentType() == Environment.STAGING
 
-    fun production(): Boolean {
-        return environmentType() == Environment.PRODUCTION
-    }
+    fun production() = environmentType() == Environment.PRODUCTION
 
-    fun environmentType(): Environment {
-        return Environment.valueOf(environment.toUpperCase())
-    }
+    fun environmentType() = Environment.valueOf(environment.toUpperCase())
 }
