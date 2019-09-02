@@ -49,6 +49,7 @@ private val options = Options()
     )
 
 fun main(args: Array<String>) {
+    println(ApplicationInfo.RELEASE)
     System.setProperty(
         "flogger.backend_factory",
         "com.google.common.flogger.backend.slf4j.Slf4jBackendFactory#getInstance"
@@ -66,7 +67,7 @@ fun main(args: Array<String>) {
         throw StartupError("Place make sure you placed a .env file in the bot's root directory.")
 
     // Load Config
-    val configBackend = cli.getOptionObject("config")
+    val configBackend = cli.getParsedOptionValue("config")
 
     val config = if (configBackend == "env") EnvConfig() else ConfigCatConfig()
 

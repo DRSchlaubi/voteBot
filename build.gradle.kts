@@ -63,8 +63,8 @@ dependencies {
 
 tasks {
     val replaceTokens = task<Copy>("replaceTokens") {
-        from("src/main/kotlin") {
-            include("**/ApplicationInfo.kt")
+        from("src/main/java") {
+            include("**/ApplicationInfo.java")
             val tokens = mapOf(
                 "releaseVersion" to project.version as String
             )
@@ -74,18 +74,18 @@ tasks {
         includeEmptyDirs = false
     }
 
-    val replaceTokensInSource = task<SourceTask>("replaceTokensInSrc") {
-        val kotlinSources = sourceSets["main"].allSource.filter {
-            it.name != "ApplicationInfo.kt"
+    val replaceTokensInSource = task<SourceTask>("replaceTokensInSource") {
+        val javaSources = sourceSets["main"].allJava.filter {
+            it.name != "ApplicationInfo.java"
         }
             .asFileTree
-        source = kotlinSources + fileTree(replaceTokens.destinationDir)
+        source = javaSources + fileTree(replaceTokens.destinationDir)
         dependsOn(replaceTokens)
     }
 
-    compileKotlin {
-        source = replaceTokensInSource.source.asFileTree
-        dependsOn("replaceTokens")
+    compileJava {
+        source = replaceTokensInSource.source
+        dependsOn(replaceTokensInSource)
     }
 
     "shadowJar"(ShadowJar::class) {
