@@ -1,5 +1,5 @@
 # VoteBot
-
+[![Build Status](https://travis-ci.org/Votebot/voteBot.svg?branch=master)](https://travis-ci.org/Votebot/voteBot)
 ## Configuration
 
 ### Environment Variables
