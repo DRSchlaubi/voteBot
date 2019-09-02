@@ -25,6 +25,9 @@ import com.orbitz.consul.Consul
 import com.orbitz.consul.model.agent.ImmutableRegistration
 import com.orbitz.consul.model.agent.Registration
 
+/**
+ * ServiceRegistry handles the the registration of this service in consul.
+ */
 class ServiceRegistry(serviceName: String, httpPort: String) {
 
     private val log = FluentLogger.forEnclosingClass()

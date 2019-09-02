@@ -19,6 +19,11 @@
 
 package wtf.votebot.bot;
 
+/**
+ * ApplicationInfo provides general information about this service.
+ *
+ * The RELEASE variable gets set by Gradle.
+ */
 public class ApplicationInfo {
   public static final String RELEASE = "@releaseVersion@";
 }

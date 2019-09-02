@@ -19,6 +19,13 @@
 
 package wtf.votebot.bot.config
 
+/**
+ * Config holds data that can be configured and loaded by multiple implementations.
+ *
+ * Currently supported:
+ * - [ConfigCatConfig]
+ * - [EnvConfig]
+ */
 interface Config {
     val environment: String
     val sentryDSN: String
@@ -26,11 +33,23 @@ interface Config {
     val serviceName: String
     val httpPort: String
 
+    /**
+     * @return true if the current environment is a development environment.
+     */
     fun development() = environmentType() == Environment.DEVELOPMENT
 
+    /**
+     * @return true if the current environment is a staging environment.
+     */
     fun staging() = environmentType() == Environment.STAGING
 
+    /**
+     * @return true if the current environment is a production environment.
+     */
     fun production() = environmentType() == Environment.PRODUCTION
 
+    /**
+     * @return the application [Environment].
+     */
     fun environmentType() = Environment.valueOf(environment.toUpperCase())
 }

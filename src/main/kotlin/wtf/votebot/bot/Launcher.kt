@@ -59,6 +59,9 @@ private val options = Options()
             .build()
     )
 
+/**
+ * Application entry point.
+ */
 fun main(args: Array<String>) {
     System.setProperty(
         "flogger.backend_factory",
@@ -97,9 +100,6 @@ fun main(args: Array<String>) {
     }
 }
 
-/**
- * Parses the specified [args] into an [CommandLine] object.
- */
 private fun parseCliOptions(args: Array<String>): CommandLine {
     val cli: CommandLine
     try {

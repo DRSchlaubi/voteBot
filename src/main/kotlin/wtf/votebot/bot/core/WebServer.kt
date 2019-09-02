@@ -27,6 +27,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 
+/**
+ * Configuration for Ktor.
+ */
 fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
