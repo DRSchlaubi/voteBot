@@ -67,7 +67,7 @@ tasks {
         from("src/main/java") {
             include("**/ApplicationInfo.java")
             val tokens = mapOf(
-                "releaseVersion" to project.version as String
+                "releaseVersion" to (project.version as? String ?: "UnknownVersion")
             )
             filter<ReplaceTokens>(mapOf("tokens" to tokens))
         }
@@ -91,7 +91,7 @@ tasks {
 
     "shadowJar"(ShadowJar::class) {
         archiveBaseName.set("shadow")
-        archiveVersion.set(project.version as String)
+        archiveVersion.set(project.version as? String ?: "UnknownVersion")
     }
 
     checkstyle {
