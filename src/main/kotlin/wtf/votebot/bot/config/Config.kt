@@ -17,15 +17,26 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
 interface Config {
-    /**
-     * Whether the bot runs in developer mode or not.
-     */
-    val devEnabled: Boolean
-    /**
-     * The Discord API token.
-     */
+    val environment: String
+    val sentryDSN: String
     val discordToken: String
+
+    fun development(): Boolean {
+        return environmentType() == Environment.DEVELOPMENT
+    }
+
+    fun staging(): Boolean {
+        return environmentType() == Environment.STAGING
+    }
+
+    fun production(): Boolean {
+        return environmentType() == Environment.PRODUCTION
+    }
+
+    fun environmentType(): Environment {
+        return Environment.valueOf(environment.toLowerCase())
+    }
 }

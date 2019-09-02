@@ -17,7 +17,7 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
 import com.configcat.ConfigurationChangeListener
 import com.configcat.ConfigurationParser
@@ -30,9 +30,18 @@ import kotlin.system.exitProcess
 class ConfigChangeRestartListener : ConfigurationChangeListener {
 
     private val log = FluentLogger.forEnclosingClass()
+    private var initializationDone = false
 
     override fun onConfigurationChanged(parser: ConfigurationParser, newConfiguration: String) {
-        log.atWarning().log("Config got updated. Restart...")
-        exitProcess(0)
+        if (!initializationDone) {
+            initializationDone = true
+            log.atInfo().log("Config loaded.")
+            return
+        }
+        log.atInfo().log("Config got updated.")
+        if (parser.parseValue(String::class.java, newConfiguration, "environment") != "development") {
+            log.atWarning().log("Restart...")
+            exitProcess(0)
+        }
     }
 }

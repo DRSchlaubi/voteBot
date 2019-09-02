@@ -17,32 +17,44 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
 import io.github.cdimascio.dotenv.dotenv
 import wtf.votebot.bot.exceptions.StartupError
 
-/**
- * Implementation of [Config] that reads the config from an `.env` file.
- */
 class EnvConfig : Config {
 
     private val dotenv = dotenv()
 
-    override val devEnabled: Boolean = true
+    override val environment: String
+        get() = dotenv[ENVIRONMENT] ?: notFound(ENVIRONMENT)
+    override val sentryDSN: String
+        get() = dotenv[SENTRY_DSN] ?: notFound(SENTRY_DSN)
     override val discordToken: String
         get() = dotenv[DISCORD_TOKEN] ?: notFound(DISCORD_TOKEN)
 
-    @Suppress("SameParameterValue") // There will be more options
+    /**
+     * Throws an exception if there is a missing key in the .env file.
+     */
     private fun notFound(option: String): Nothing = throw StartupError(
         "Could not find $option in .env file." +
                 "Please make sure to include all options from the example"
     )
 
     companion object {
+        private const val BASE = "BOT_"
+
         /**
-         * .env file key for the Discord API token.
+         * Environment variable key for the bot environment.
          */
-        const val DISCORD_TOKEN = "DISCORD_TOKEN"
+        const val ENVIRONMENT = "${BASE}ENVIRONMENT"
+        /**
+         * Environment variable key for the Discord API token.
+         */
+        const val DISCORD_TOKEN = "${BASE}DISCORD_TOKEN"
+        /**
+         * Environment variable key for the sentry dsn.
+         */
+        const val SENTRY_DSN = "${BASE}SENTRY_DSN"
     }
 }

@@ -17,10 +17,10 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
-/**
- * Immutable implementation of [Config].
- * @see ConfigBuilder
- */
-class ImmutableConfig(override val devEnabled: Boolean, override val discordToken: String) : Config
+enum class Environment(val key: String) {
+    DEVELOPMENT("development"),
+    STAGING("staging"),
+    PRODUCTION("production")
+}

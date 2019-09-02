@@ -19,13 +19,9 @@
 
 package wtf.votebot.bot.core
 
-import com.orbitz.consul.Consul
-import wtf.votebot.bot.io.Config
+import wtf.votebot.bot.config.Config
 
-class VoteBot(
-    private val config: Config,
-    private val consul: Consul?
-) {
+class VoteBot(private val config: Config) {
     init {
         Runtime.getRuntime().addShutdownHook(Thread(this::shutdown))
     }

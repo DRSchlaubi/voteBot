@@ -17,43 +17,37 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.io
+package wtf.votebot.bot.config
 
 import com.configcat.AutoPollingPolicy
 import com.configcat.ConfigCatClient
+import com.google.common.flogger.FluentLogger
+import io.github.cdimascio.dotenv.dotenv
+import kotlin.system.exitProcess
 
-/**
- * Implementation of [Config] that fetched the config from ConfigCat.
- * @param configCatPollInterval interval of config change polling.
- * @param configCatKey ConfigCat API key
- */
-class RemoteConfig(configCatPollInterval: Int, configCatKey: String) : Config {
-    private val configCatClient: ConfigCatClient
-    override val devEnabled: Boolean = false
+class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : Config {
+    private val log = FluentLogger.forEnclosingClass()
+
+    override val environment: String
+    override val sentryDSN: String
     override val discordToken: String
 
     init {
-        configCatClient = ConfigCatClient.newBuilder()
+        if (configCatKey == null) {
+            log.atSevere()
+                .log("ConfigCat API key is not set as environment variable. Please make sure you set it or enable the environment variable configuration backend.")
+            exitProcess(1)
+        }
+        val client = ConfigCatClient.newBuilder()
             .refreshPolicy { configFetcher, cache ->
                 AutoPollingPolicy.newBuilder()
-                    .autoPollIntervalInSeconds(configCatPollInterval)
+                    .autoPollIntervalInSeconds(60)
                     .configurationChangeListener(ConfigChangeRestartListener())
                     .build(configFetcher, cache)
             }
             .build(configCatKey)
-        discordToken = configCatClient.getValue(String::class.java, DISCORD_TOKEN, "")
-    }
-
-    companion object {
-
-        /**
-         * ConfigCat key for Discord API token.
-         */
-        const val DISCORD_TOKEN = "discord_token"
-
-        /**
-         * Default config poll interval.
-         */
-        const val DEFAULT_POLL_INTERVAL = 60
+        environment = client.getValue(String::class.java, "environment", "production")
+        sentryDSN = client.getValue(String::class.java, "sentry_dsn", null)
+        discordToken = client.getValue(String::class.java, "discord_token", null)
     }
 }

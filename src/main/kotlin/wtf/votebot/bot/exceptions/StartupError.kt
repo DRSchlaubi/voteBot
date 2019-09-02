@@ -27,5 +27,4 @@ class StartupError @JvmOverloads constructor(
     cause: Throwable? = null,
     enableSuppression: Boolean = false,
     writableStackTrace: Boolean = true
-) :
-    Error(message, cause, enableSuppression, writableStackTrace)
+) : Error(message, cause, enableSuppression, writableStackTrace)

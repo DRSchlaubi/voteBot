@@ -19,103 +19,59 @@
 
 package wtf.votebot.bot
 
-import com.configcat.ConfigCatClient
 import com.google.common.flogger.FluentLogger
-import com.orbitz.consul.Consul
+import io.sentry.Sentry
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import wtf.votebot.bot.core.VoteBot
+import wtf.votebot.bot.config.ConfigCatConfig
+import wtf.votebot.bot.config.EnvConfig
 import wtf.votebot.bot.exceptions.StartupError
-import wtf.votebot.bot.io.EnvConfig
-import wtf.votebot.bot.io.RemoteConfig
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.system.exitProcess
 
-private val log = FluentLogger.forEnclosingClass()
 private val options = Options()
     .addOption(
-        Option.builder("D")
-            .longOpt("dev")
-            .desc("Enables developer mode")
-            .build()
-    )
-    .addOption(
-        Option.builder("CPI")
-            .longOpt("config-poll-interval")
-            .desc("Defines the ConfigCat poll interval")
-            .hasArg()
-            .type(Int::class.java)
+        Option.builder("C")
+            .longOpt("env")
+            .desc("Set the configuration backend.")
             .build()
     )
     .addOption(
         Option.builder("H")
             .longOpt("help")
-            .desc("Displays a list of all CLI options")
+            .desc("Display a list of all CLI options")
             .build()
     )
 
 fun main(args: Array<String>) {
+    System.setProperty(
+        "flogger.backend_factory",
+        "com.google.common.flogger.backend.slf4j.Slf4jBackendFactory#getInstance"
+    )
+    val log = FluentLogger.forEnclosingClass()
 
-    // CLI
-    val cli: CommandLine = parseCliOptions(args)
-
+    // Parse CLI flags
+    val cli = DefaultParser().parse(options, args)
     if (cli.hasOption("H")) {
         sendHelp()
         exitProcess(0)
     }
-    val devEnabled = cli.hasOption("dev")
-    if (devEnabled) {
-        return launchDevMode()
-    }
 
-    launchNormally(cli)
-}
+    if (!Files.exists(Path.of(".env")))
+        throw StartupError("Place make sure you placed a .env file in the bot's root directory.")
 
-/**
- * Launches the bot in developer mode.
- */
-fun launchDevMode() {
-    log.atInfo().log("Launching in developer mode!")
-    if (Files.exists(Path.of(".env"))) {
-        throw StartupError("Please place a .env file in the bots root directory when starting in dev mode!")
-    }
-    val config = EnvConfig()
-    VoteBot(config, null)
-}
+    // Load Config
+    val configBackend = cli.getOptionObject("config")
 
-/**
- * Launches the bot in production mode.
- */
-@Suppress("SpellCheckingInspection")
-fun launchNormally(cli: CommandLine) {
-    val consul = Consul.builder().build()
-    val configCatKey = consul.keyValueClient().getValueAsString("configcat_key")
-        .orElseThrow {
-            StartupError(
-                "ConfigCat not found or empty. Please make sure you added a ConfigCat key" +
-                        " to Consul or enable developer mode"
-            )
-        }
-    val configCatPollInterval = if (cli.hasOption("CPI")) {
-        cli.getParsedOptionValue("CPI") as Int
-    } else {
-        RemoteConfig.DEFAULT_POLL_INTERVAL
-    }
+    val config = if (configBackend == "env") EnvConfig() else ConfigCatConfig()
 
-    val config = retrieveConfig(configCatPollInterval, configCatKey)
-    VoteBot(config, consul)
-}
-
-/**
- * Creates a [ConfigCatClient] using the specified [configCatPollInterval] and [configCatKey].
- */
-private fun retrieveConfig(configCatPollInterval: Int, configCatKey: String): RemoteConfig {
-    return RemoteConfig(configCatPollInterval, configCatKey)
+    // Initialize Sentry
+    Sentry.init(config.sentryDSN)
 }
 
 /**
@@ -126,11 +82,10 @@ private fun parseCliOptions(args: Array<String>): CommandLine {
     try {
         cli = DefaultParser().parse(options, args)
     } catch (e: ParseException) {
-        log.atSevere().withCause(e).log("Could not parse CLI options")
+       FluentLogger.forEnclosingClass().atSevere().withCause(e).log("Could not parse CLI options")
         sendHelp()
         exitProcess(1)
     }
-
     return cli
 }
 
