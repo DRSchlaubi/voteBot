@@ -31,11 +31,17 @@ class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : 
     override val environment: String
     override val sentryDSN: String
     override val discordToken: String
+    override val serviceName: String
+    override val httpPort: String
 
     init {
         if (configCatKey == null) {
             log.atSevere()
-                .log("ConfigCat API key is not set as environment variable. Please make sure you set it or enable the environment variable configuration backend.")
+                .log(
+                    "ConfigCat API key is not set as environment variable." +
+                            "Please make sure you set it or enable the environment" +
+                            "variable configuration backend."
+                )
             exitProcess(1)
         }
         val client = ConfigCatClient.newBuilder()
@@ -49,5 +55,7 @@ class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : 
         environment = client.getValue(String::class.java, "environment", "production")
         sentryDSN = client.getValue(String::class.java, "sentry_dsn", null)
         discordToken = client.getValue(String::class.java, "discord_token", null)
+        serviceName = client.getValue(String::class.java, "service_name", "bot")
+        httpPort = client.getValue(String::class.java, "http_port", "3245")
     }
 }

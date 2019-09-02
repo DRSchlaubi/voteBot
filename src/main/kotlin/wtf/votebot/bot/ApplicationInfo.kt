@@ -17,20 +17,11 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot
 
-interface Config {
-    val environment: String
-    val sentryDSN: String
-    val discordToken: String
-    val serviceName: String
-    val httpPort: String
-
-    fun development() = environmentType() == Environment.DEVELOPMENT
-
-    fun staging() = environmentType() == Environment.STAGING
-
-    fun production() = environmentType() == Environment.PRODUCTION
-
-    fun environmentType() = Environment.valueOf(environment.toUpperCase())
+class ApplicationInfo {
+    companion object {
+        // TODO const val RELEASE = "@RELEASE@"
+        const val RELEASE = "IDK-0.9999.9.9"
+    }
 }

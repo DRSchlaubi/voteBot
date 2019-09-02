@@ -32,6 +32,10 @@ class EnvConfig : Config {
         get() = dotenv[SENTRY_DSN] ?: notFound(SENTRY_DSN)
     override val discordToken: String
         get() = dotenv[DISCORD_TOKEN] ?: notFound(DISCORD_TOKEN)
+    override val serviceName: String
+        get() = dotenv[SERVICE_NAME] ?: "bot"
+    override val httpPort: String
+        get() = dotenv[HTTP_PORT] ?: "3245"
 
     /**
      * Throws an exception if there is a missing key in the .env file.
@@ -56,5 +60,15 @@ class EnvConfig : Config {
          * Environment variable key for the sentry dsn.
          */
         const val SENTRY_DSN = "${BASE}SENTRY_DSN"
+
+        /**
+         * Name that is used for service registry.
+         */
+        const val SERVICE_NAME = "${BASE}SERVICE_NAME"
+
+        /**
+         * POrt of the embedded web server.
+         */
+        const val HTTP_PORT = "${BASE}HTTP_PORT"
     }
 }
