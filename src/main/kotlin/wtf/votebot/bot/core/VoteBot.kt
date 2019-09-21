@@ -21,6 +21,9 @@ package wtf.votebot.bot.core
 
 import wtf.votebot.bot.config.Config
 
+/**
+ * The bots actual main class.
+ */
 class VoteBot(private val config: Config) {
     init {
         Runtime.getRuntime().addShutdownHook(Thread(this::shutdown))

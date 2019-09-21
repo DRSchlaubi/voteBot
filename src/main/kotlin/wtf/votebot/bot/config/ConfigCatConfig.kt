@@ -25,6 +25,9 @@ import com.google.common.flogger.FluentLogger
 import io.github.cdimascio.dotenv.dotenv
 import kotlin.system.exitProcess
 
+/**
+ * A [Config] implementation that loads data from https://configcat.com
+ */
 class ConfigCatConfig(configCatKey: String? = dotenv()["BOT_CONFIG_CAT_KEY"]) : Config {
     private val log = FluentLogger.forEnclosingClass()
 

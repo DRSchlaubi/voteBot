@@ -22,6 +22,9 @@ package wtf.votebot.bot.config
 import io.github.cdimascio.dotenv.dotenv
 import wtf.votebot.bot.exceptions.StartupError
 
+/**
+ * A [Config] implementation that loads data from an env file or environment variables.
+ */
 class EnvConfig : Config {
 
     private val dotenv = dotenv()
@@ -37,9 +40,6 @@ class EnvConfig : Config {
     override val httpPort: String
         get() = dotenv[HTTP_PORT] ?: "3245"
 
-    /**
-     * Throws an exception if there is a missing key in the .env file.
-     */
     private fun notFound(option: String): Nothing = throw StartupError(
         "Could not find $option in .env file." +
                 "Please make sure to include all options from the example"

@@ -17,11 +17,12 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot
+package wtf.votebot.bot;
 
-class ApplicationInfo {
-    companion object {
-        // TODO const val RELEASE = "@RELEASE@"
-        const val RELEASE = "IDK-0.9999.9.9"
-    }
+/**
+ * ApplicationInfo provides general information about this service.
+ * The RELEASE variable gets set by Gradle.
+ */
+public class ApplicationInfo {
+  public static final String RELEASE = "@releaseVersion@";
 }

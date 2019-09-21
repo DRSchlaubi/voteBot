@@ -18,6 +18,7 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -62,9 +63,35 @@ dependencies {
 }
 
 tasks {
+    val replaceTokens = task<Copy>("replaceTokens") {
+        from("src/main/java") {
+            include("**/ApplicationInfo.java")
+            val tokens = mapOf(
+                "releaseVersion" to (project.version as? String ?: "UnknownVersion")
+            )
+            filter<ReplaceTokens>(mapOf("tokens" to tokens))
+        }
+        into("build/filteredSrc")
+        includeEmptyDirs = false
+    }
+
+    val replaceTokensInSource = task<SourceTask>("replaceTokensInSource") {
+        val javaSources = sourceSets["main"].allJava.filter {
+            it.name != "ApplicationInfo.java"
+        }
+            .asFileTree
+        source = javaSources + fileTree(replaceTokens.destinationDir)
+        dependsOn(replaceTokens)
+    }
+
+    compileJava {
+        source = replaceTokensInSource.source
+        dependsOn(replaceTokensInSource)
+    }
+
     "shadowJar"(ShadowJar::class) {
         archiveBaseName.set("shadow")
-        archiveVersion.set(project.version as String)
+        archiveVersion.set(project.version as? String ?: "UnknownVersion")
     }
 
     checkstyle {
@@ -78,6 +105,7 @@ tasks {
 
     spotbugs {
         toolVersion = "4.0.0-beta1"
+        isIgnoreFailures = true
     }
 
     spotbugsMain {
