@@ -30,11 +30,12 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import wtf.votebot.bot.config.ConfigDefaults
-import wtf.votebot.bot.config.ConfigLoader
-import wtf.votebot.bot.config.EnvConfig
-import wtf.votebot.bot.config.Environment
-import wtf.votebot.bot.config.VaultConfig
+import wtf.votebot.bot.config.Config
+import wtf.votebot.bot.config_2.ConfigDefaults
+import wtf.votebot.bot.config_2.ConfigLoader
+import wtf.votebot.bot.config_2.EnvConfig
+import wtf.votebot.bot.config_2.Environment
+import wtf.votebot.bot.config_2.VaultConfig
 import wtf.votebot.bot.core.ServiceRegistry
 import wtf.votebot.bot.core.module
 import wtf.votebot.bot.exceptions.StartupError
@@ -73,23 +74,22 @@ fun main(args: Array<String>) {
         exitProcess(0)
     }
 
-    if (!Files.exists(Path.of(".env"))) {
-        throw StartupError("Place make sure you placed a .env file in the bot's root directory.")
-    }
+//    // Load Config
+//    val envConfig = EnvConfig()
+//    val config = ConfigLoader(
+//        envConfig,
+//        if (Environment.valueOf(
+//                envConfig.environment?.toUpperCase() ?: ConfigDefaults.ENVIRONMENT
+//            ) == Environment.DEVELOPMENT
+//        ) null else VaultConfig(
+//            envConfig.vaultToken ?: ConfigLoader.requiredNotFound("VaultToken"),
+//            envConfig.vaultPath ?: ConfigDefaults.VAULT_PATH,
+//            envConfig.vaultAddress ?: ConfigDefaults.VAULT_ADDRESS
+//        )
+//    )
 
-    // Load Config
-    val envConfig = EnvConfig()
-    val config = ConfigLoader(
-        envConfig,
-        if (Environment.valueOf(
-                envConfig.environment?.toUpperCase() ?: ConfigDefaults.ENVIRONMENT
-            ) == Environment.DEVELOPMENT
-        ) null else VaultConfig(
-            envConfig.vaultToken ?: ConfigLoader.requiredNotFound("VaultToken"),
-            envConfig.vaultPath ?: ConfigDefaults.VAULT_PATH,
-            envConfig.vaultAddress ?: ConfigDefaults.VAULT_ADDRESS
-        )
-    )
+    val configLoader = wtf.votebot.bot.config.ConfigLoader(Config::class, wtf.votebot.bot.config.EnvConfig::class)
+    val config = configLoader.buildConfig()
 
     // Initialize Sentry
     Sentry.init(config.sentryDSN)

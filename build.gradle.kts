@@ -60,6 +60,7 @@ dependencies {
 
     detektPlugins("io.gitlab.arturbosch.detekt", "detekt-formatting", "1.0.1")
     implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
     testCompile("junit", "junit", "4.12")
 }
 

@@ -19,7 +19,7 @@
 
 package wtf.votebot.bot.core
 
-import wtf.votebot.bot.config.Config
+import wtf.votebot.bot.config_2.Config
 
 /**
  * The bots actual main class.

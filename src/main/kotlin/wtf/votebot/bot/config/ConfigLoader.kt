@@ -19,22 +19,5 @@
 
 package wtf.votebot.bot.config
 
-import wtf.votebot.bot.exceptions.StartupError
-
-class ConfigLoader(
-    envConfig: EnvConfig,
-    vaultConfig: VaultConfig?
-) : Config {
-
-    override val environment = envConfig.environment ?: ConfigDefaults.ENVIRONMENT
-    override val httpPort = envConfig.httpPort ?: ConfigDefaults.HTTP_PORT
-    override val sentryDSN = vaultConfig?.sentryDSN ?: envConfig.sentryDSN
-    override val discordToken = vaultConfig?.discordToken ?: envConfig.discordToken ?: requiredNotFound("DiscordToken")
-
-    companion object {
-        fun requiredNotFound(option: String): Nothing = throw StartupError(
-            "Could not find $option in any of the config backends. " +
-                    "Please make sure to include all required options."
-        )
-    }
+class ConfigLoader {
 }

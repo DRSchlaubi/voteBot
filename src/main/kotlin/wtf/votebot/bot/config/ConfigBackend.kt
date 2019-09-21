@@ -19,5 +19,5 @@
 
 package wtf.votebot.bot.config
 
-interface Config {
+interface ConfigBackend {
 }

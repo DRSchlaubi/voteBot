@@ -17,7 +17,8 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot
 
-interface Config {
-}
+import com.google.common.flogger.FluentLogger
+
+typealias Logger = FluentLogger
