@@ -107,7 +107,7 @@ application {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_12
+    sourceCompatibility = JavaVersion.VERSION_HIGHER
 }
 
 tasks.withType<KotlinCompile> {
