@@ -17,13 +17,14 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot;
+package wtf.votebot.bot.config
 
-/**
- * ApplicationInfo provides general information about this service.
- * The RELEASE variable gets set by Gradle.
- */
-public class ApplicationInfo {
-  public static final String RELEASE = "@releaseVersion@";
-  public static final String SERVICE_NAME = "votebot";
+class ConfigDefaults {
+
+    companion object {
+        const val VAULT_ADDRESS = "http://127.0.0.1:8200"
+        const val VAULT_PATH = "votebot/"
+        const val HTTP_PORT = "3245"
+        val ENVIRONMENT = Environment.PRODUCTION.key
+    }
 }

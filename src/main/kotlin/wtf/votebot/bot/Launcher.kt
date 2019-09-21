@@ -30,8 +30,11 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import wtf.votebot.bot.config.ConfigCatConfig
+import wtf.votebot.bot.config.ConfigDefaults
+import wtf.votebot.bot.config.ConfigLoader
 import wtf.votebot.bot.config.EnvConfig
+import wtf.votebot.bot.config.Environment
+import wtf.votebot.bot.config.VaultConfig
 import wtf.votebot.bot.core.ServiceRegistry
 import wtf.votebot.bot.core.module
 import wtf.votebot.bot.exceptions.StartupError
@@ -40,12 +43,6 @@ import java.nio.file.Path
 import kotlin.system.exitProcess
 
 private val options = Options()
-    .addOption(
-        Option.builder("C")
-            .longOpt("env")
-            .desc("Set the configuration backend.")
-            .build()
-    )
     .addOption(
         Option.builder("H")
             .longOpt("help")
@@ -81,9 +78,18 @@ fun main(args: Array<String>) {
     }
 
     // Load Config
-    val configBackend = cli.getParsedOptionValue("config")
-
-    val config = if (configBackend == "env") EnvConfig() else ConfigCatConfig()
+    val envConfig = EnvConfig()
+    val config = ConfigLoader(
+        envConfig,
+        if (Environment.valueOf(
+                envConfig.environment?.toUpperCase() ?: ConfigDefaults.ENVIRONMENT
+            ) == Environment.DEVELOPMENT
+        ) null else VaultConfig(
+            envConfig.vaultToken ?: ConfigLoader.requiredNotFound("VaultToken"),
+            envConfig.vaultPath ?: ConfigDefaults.VAULT_PATH,
+            envConfig.vaultAddress ?: ConfigDefaults.VAULT_ADDRESS
+        )
+    )
 
     // Initialize Sentry
     Sentry.init(config.sentryDSN)
@@ -95,8 +101,8 @@ fun main(args: Array<String>) {
     embeddedServer(Netty, config.httpPort.toInt(), module = Application::module).start()
 
     // Service Registry
-    if (!config.development() || cli.hasOption("FSR")) {
-        ServiceRegistry(config.serviceName, config.httpPort)
+    if (!config.isDevelopment() || cli.hasOption("FSR")) {
+        ServiceRegistry(ApplicationInfo.SERVICE_NAME, config.httpPort)
     }
 }
 

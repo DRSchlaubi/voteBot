@@ -23,30 +23,29 @@ package wtf.votebot.bot.config
  * Config holds data that can be configured and loaded by multiple implementations.
  *
  * Currently supported:
- * - [ConfigCatConfig]
  * - [EnvConfig]
+ * - [VaultConfig]
  */
 interface Config {
     val environment: String
-    val sentryDSN: String
+    val sentryDSN: String?
     val discordToken: String
-    val serviceName: String
     val httpPort: String
 
     /**
      * @return true if the current environment is a development environment.
      */
-    fun development() = environmentType() == Environment.DEVELOPMENT
+    fun isDevelopment() = environmentType() == Environment.DEVELOPMENT
 
     /**
      * @return true if the current environment is a staging environment.
      */
-    fun staging() = environmentType() == Environment.STAGING
+    fun isStaging() = environmentType() == Environment.STAGING
 
     /**
      * @return true if the current environment is a production environment.
      */
-    fun production() = environmentType() == Environment.PRODUCTION
+    fun isProduction() = environmentType() == Environment.PRODUCTION
 
     /**
      * @return the application [Environment].

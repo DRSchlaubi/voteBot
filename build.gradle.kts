@@ -49,6 +49,7 @@ dependencies {
     implementation("com.google.inject", "guice", "4.1.0")
     implementation("dev.misfitlabs.kotlinguice4", "kotlin-guice", "1.4.0")
     implementation("com.orbitz.consul", "consul-client", "1.3.7")
+    implementation("com.bettercloud", "vault-java-driver", "5.0.0")
     implementation("com.configcat", "configcat-java-client", "1.2.0")
     implementation("commons-cli", "commons-cli", "1.4")
     implementation("com.discord4j", "discord4j-core", "3.0.8")

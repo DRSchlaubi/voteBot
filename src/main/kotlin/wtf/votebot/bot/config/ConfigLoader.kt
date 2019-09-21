@@ -17,13 +17,24 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot;
+package wtf.votebot.bot.config
 
-/**
- * ApplicationInfo provides general information about this service.
- * The RELEASE variable gets set by Gradle.
- */
-public class ApplicationInfo {
-  public static final String RELEASE = "@releaseVersion@";
-  public static final String SERVICE_NAME = "votebot";
+import wtf.votebot.bot.exceptions.StartupError
+
+class ConfigLoader(
+    envConfig: EnvConfig,
+    vaultConfig: VaultConfig?
+) : Config {
+
+    override val environment = envConfig.environment ?: ConfigDefaults.ENVIRONMENT
+    override val httpPort = envConfig.httpPort ?: ConfigDefaults.HTTP_PORT
+    override val sentryDSN = vaultConfig?.sentryDSN ?: envConfig.sentryDSN
+    override val discordToken = vaultConfig?.discordToken ?: envConfig.discordToken ?: requiredNotFound("DiscordToken")
+
+    companion object {
+        fun requiredNotFound(option: String): Nothing = throw StartupError(
+            "Could not find $option in any of the config backends. " +
+                    "Please make sure to include all required options."
+        )
+    }
 }

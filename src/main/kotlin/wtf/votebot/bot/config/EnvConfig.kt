@@ -20,30 +20,21 @@
 package wtf.votebot.bot.config
 
 import io.github.cdimascio.dotenv.dotenv
-import wtf.votebot.bot.exceptions.StartupError
 
 /**
  * A [Config] implementation that loads data from an env file or environment variables.
  */
-class EnvConfig : Config {
+class EnvConfig {
 
     private val dotenv = dotenv()
 
-    override val environment: String
-        get() = dotenv[ENVIRONMENT] ?: notFound(ENVIRONMENT)
-    override val sentryDSN: String
-        get() = dotenv[SENTRY_DSN] ?: notFound(SENTRY_DSN)
-    override val discordToken: String
-        get() = dotenv[DISCORD_TOKEN] ?: notFound(DISCORD_TOKEN)
-    override val serviceName: String
-        get() = dotenv[SERVICE_NAME] ?: "bot"
-    override val httpPort: String
-        get() = dotenv[HTTP_PORT] ?: "3245"
-
-    private fun notFound(option: String): Nothing = throw StartupError(
-        "Could not find $option in .env file." +
-                "Please make sure to include all options from the example"
-    )
+    val vaultAddress: String? = dotenv[VAULT_ADDRESS]
+    val vaultPath: String? = dotenv[VAULT_PATH]
+    val vaultToken: String? = dotenv[VAULT_TOKEN]
+    val environment: String? = dotenv[ENVIRONMENT]
+    val sentryDSN: String? = dotenv[SENTRY_DSN]
+    val discordToken: String? = dotenv[DISCORD_TOKEN]
+    val httpPort: String? = dotenv[HTTP_PORT]
 
     companion object {
         private const val BASE = "BOT_"
@@ -62,13 +53,12 @@ class EnvConfig : Config {
         const val SENTRY_DSN = "${BASE}SENTRY_DSN"
 
         /**
-         * Name that is used for service registry.
-         */
-        const val SERVICE_NAME = "${BASE}SERVICE_NAME"
-
-        /**
-         * POrt of the embedded web server.
+         * Port of the embedded web server.
          */
         const val HTTP_PORT = "${BASE}HTTP_PORT"
+
+        const val VAULT_ADDRESS = "${BASE}VAULT_ADDRESS"
+        const val VAULT_PATH = "${BASE}VAULT_PATH"
+        const val VAULT_TOKEN = "${BASE}VAULT_TOKEN"
     }
 }

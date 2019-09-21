@@ -19,11 +19,31 @@
 
 package wtf.votebot.bot.config
 
-/**
- * An environment defines the environment this service is running in.
- */
-enum class Environment(val key: String) {
-    DEVELOPMENT("DEVELOPMENT"),
-    STAGING("STAGING"),
-    PRODUCTION("PRODUCTION")
+import com.bettercloud.vault.Vault
+import com.bettercloud.vault.VaultConfig
+
+class VaultConfig(
+    token: String,
+    kvPath: String,
+    address: String
+) {
+
+    private val vault = Vault(
+        VaultConfig()
+            .address(address)
+            .token(token)
+            .build()
+    )
+
+    val discordToken: String?
+
+    init {
+        val listRes = vault.logical().list(kvPath)
+        println(listRes)
+        val res = vault.logical().read(kvPath)
+        val body = res.restResponse.body.toString(Charsets.UTF_8)
+        println(vault.logical().write(kvPath, mutableMapOf<String, Any>("abc" to "adawd")).data)
+        discordToken = vault.logical().read(kvPath).data["discord_token"]
+    }
+    val sentryDSN: String? = vault.logical().read(kvPath).data["sentry_dsn"]
 }
