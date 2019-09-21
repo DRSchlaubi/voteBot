@@ -20,4 +20,20 @@
 package wtf.votebot.bot.config
 
 interface ConfigBackend {
+
+    /**
+     * @return the value corresponding to the [key] or ```null``` if the key is not set.
+     */
+    operator fun <T> get(key: String): T?
+
+    /**
+     * @return the value corresponding to the [key] or [default] if the key is not set.
+     * @see ConfigBackend.get
+     */
+    fun <T> getOrDefault(key: String, default: T) = get(key) ?: default
+
+    /**
+     * @return whether this config backend is currently usable or not.
+     */
+    fun requirementsMet(): Boolean
 }

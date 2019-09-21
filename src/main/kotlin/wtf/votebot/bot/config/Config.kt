@@ -19,5 +19,35 @@
 
 package wtf.votebot.bot.config
 
+import wtf.votebot.bot.config_2.Environment
+
 interface Config {
+    @ConfigRequired
+    val environment: String
+    val sentryDSN: String?
+    @ConfigRequired
+    val discordToken: String
+    @ConfigRequired
+    val httpPort: String
+
+
+    /**
+     * @return true if the current environment is a development environment.
+     */
+    fun isDevelopment() = environmentType() == Environment.DEVELOPMENT
+
+    /**
+     * @return true if the current environment is a staging environment.
+     */
+    fun isStaging() = environmentType() == Environment.STAGING
+
+    /**
+     * @return true if the current environment is a production environment.
+     */
+    fun isProduction() = environmentType() == Environment.PRODUCTION
+
+    /**
+     * @return the application [Environment].
+     */
+    fun environmentType() = Environment.valueOf(environment.toUpperCase())
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot.config_2
 
 /**
  * Config holds data that can be configured and loaded by multiple implementations.

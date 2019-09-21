@@ -17,7 +17,7 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot.config_2
 
 /**
  * An environment defines the environment this service is running in.

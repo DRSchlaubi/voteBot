@@ -19,5 +19,51 @@
 
 package wtf.votebot.bot.config
 
-class EnvConfig {
+import io.github.cdimascio.dotenv.dotenv
+import wtf.votebot.bot.Logger
+import java.nio.file.Files
+import java.nio.file.Path
+
+@Suppress("UNCHECKED_CAST", "SpellCheckingInspection")
+@ConfigBackendLead
+class EnvConfig(@Suppress("UNUSED") mainConfig: ConfigBackend?) : ConfigBackend {
+
+    private val log = Logger.forEnclosingClass()
+    private val dotenv by lazy { dotenv() }
+
+    override fun <T> get(key: String) = dotenv[key] as T
+
+    override fun requirementsMet(): Boolean {
+        if (!Files.exists(Path.of(".env"))) {
+            log.atSevere().log("[CONFIG] Place make sure you placed a .env file in the bot's root directory.")
+            return false
+        }
+        return true
+    }
+
+    companion object {
+        private const val BASE = "BOT_"
+
+        /**
+         * Environment variable key for the bot environment.
+         */
+        const val ENVIRONMENT = "${BASE}ENVIRONMENT"
+        /**
+         * Environment variable key for the Discord API token.
+         */
+        const val DISCORD_TOKEN = "${BASE}DISCORD_TOKEN"
+        /**
+         * Environment variable key for the sentry dsn.
+         */
+        const val SENTRY_DSN = "${BASE}SENTRY_DSN"
+
+        /**
+         * Port of the embedded web server.
+         */
+        const val HTTP_PORT = "${BASE}HTTP_PORT"
+
+        const val VAULT_ADDRESS = "${BASE}VAULT_ADDRESS"
+        const val VAULT_PATH = "${BASE}VAULT_PATH"
+        const val VAULT_TOKEN = "${BASE}VAULT_TOKEN"
+    }
 }
