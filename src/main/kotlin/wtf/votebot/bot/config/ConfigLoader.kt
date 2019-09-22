@@ -64,7 +64,7 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         Config::class.declaredMemberProperties.forEach propertyLoop@{
             if (!it.hasAnnotation<ConfigKey>())
                 return@propertyLoop
-            val cfgKey = it.findAnnotation<ConfigKey>()?.value!!
+            val cfgKey = it.findAnnotation<ConfigKey>()!!.value
             val cfgValue = backend.get<Any>(it)
             if (cfgValue != null && !values.containsKey(it.name)) {
                 values[it.name] = cfgValue
