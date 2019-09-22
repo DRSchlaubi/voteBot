@@ -21,6 +21,7 @@ package wtf.votebot.bot.config
 
 import wtf.votebot.bot.Logger
 import wtf.votebot.bot.config.backend.ConfigBackend
+import wtf.votebot.bot.exceptions.ConfigurationError
 import wtf.votebot.bot.exceptions.StartupError
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -92,13 +93,18 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
      * @return the loaded [Config]
      */
     fun build(): Config {
+        var error = false
         for (property in Config::class.declaredMemberProperties) {
             if (!property.hasAnnotation<ConfigKey>() || !property.hasAnnotation<ConfigRequired>())
                 continue
             val cfgKey = property.findAnnotation<ConfigKey>()?.value
-            if (!values.containsKey(cfgKey)) {
+            if (!values.containsKey(property.name)) {
                 log.atSevere().log("Could not find required config key: %s", cfgKey)
+                error = true
             }
+        }
+        if (error) {
+            throw ConfigurationError("Incomplete configuration. See errors above.")
         }
         return load()
     }
