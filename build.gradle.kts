@@ -52,7 +52,7 @@ dependencies {
     implementation("com.bettercloud", "vault-java-driver", "5.0.0")
     implementation("com.configcat", "configcat-java-client", "1.2.0")
     implementation("commons-cli", "commons-cli", "1.4")
-    implementation("com.discord4j", "discord4j-core", "3.0.8")
+    implementation("com.discord4j", "discord4j-core", "3.0.9")
     implementation("io.sentry", "sentry", "1.7.27")
     implementation("io.sentry", "sentry-logback", "1.7.27")
     implementation("io.github.cdimascio", "java-dotenv", "5.1.1")
