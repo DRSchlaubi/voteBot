@@ -37,11 +37,6 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
     private val values = mutableMapOf<String, Any>()
 
     init {
-        Config::class.declaredMemberProperties.forEach {
-            if (!it.hasAnnotation<ConfigKey>())
-                return@forEach
-            values[it.findAnnotation<ConfigKey>()!!.value] = Unit
-        }
         val backends =
             backendClasses.filter { it.hasAnnotation<ConfigBackend.Priority>() }.toMutableList()
         backends.sortBy { it.findAnnotation<ConfigBackend.Priority>()?.priority }
@@ -68,10 +63,10 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         val backend = constructor.call(load())
         if (!backend.requirementsMet())
             return
-        Config::class.declaredMemberProperties.forEach propertyLoop@{
+        Config::class.declaredMemberProperties.forEach {
             if (!it.hasAnnotation<ConfigKey>())
-                return@propertyLoop
-            val cfgKey = it.findAnnotation<ConfigKey>()!!.value
+                return@forEach
+            val cfgKey = it.findAnnotation<ConfigKey>()?.value
             val cfgValue = backend.get<Any>(it)
             if (cfgValue != null && !values.containsKey(it.name)) {
                 values[it.name] = cfgValue
