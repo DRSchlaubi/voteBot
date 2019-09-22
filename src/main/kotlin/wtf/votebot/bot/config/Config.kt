@@ -86,7 +86,8 @@ interface Config {
     /**
      * @return true if the current environment is a production environment.
      */
-    fun isProduction() = environmentType() == Environment.PRODUCTION || !isDevelopment() && !isStaging()
+    fun isProduction() =
+        environmentType() == Environment.PRODUCTION || !isDevelopment() && !isStaging()
 
     /**
      * @return the application [Environment].

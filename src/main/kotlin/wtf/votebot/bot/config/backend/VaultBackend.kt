@@ -42,7 +42,10 @@ class VaultBackend(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> get(property: KProperty1<Config, *>) =
-        vault.logical().read(config.vaultPath + property.findAnnotation<VaultKey>()?.key).data[config.environmentType().key] as T
+        vault.logical().read(
+            config.vaultPath +
+                    property.findAnnotation<VaultKey>()?.key
+        ).data[config.environmentType().key] as T
 
     override fun requirementsMet() = !config.isDevelopment()
 }

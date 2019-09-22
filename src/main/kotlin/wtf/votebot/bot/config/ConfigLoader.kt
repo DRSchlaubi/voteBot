@@ -42,11 +42,16 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
                 return@forEach
             values[it.findAnnotation<ConfigKey>()!!.value] = Unit
         }
-        val backends = backendClasses.filter { it.hasAnnotation<ConfigBackend.Priority>() }.toMutableList()
+        val backends =
+            backendClasses.filter { it.hasAnnotation<ConfigBackend.Priority>() }.toMutableList()
         backends.sortBy { it.findAnnotation<ConfigBackend.Priority>()?.priority }
 
         if (backends.isEmpty()) {
-            log.atSevere().log("[CONFIG] No suitable configuration backends found see log above for reasons!")
+            log.atSevere()
+                .log(
+                    "[CONFIG] No suitable configuration " +
+                            "backends found see log above for reasons!"
+                )
             throw StartupError("No suitable configuration backends available.")
         }
 
@@ -55,7 +60,9 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
 
     private fun loadValuesFromBackendClass(backendClass: KClass<out ConfigBackend>) {
         val constructor = backendClass.constructors.firstOrNull()
-        if (constructor == null || constructor.parameters.size > 1 || constructor.parameters.first().type.classifier != Config::class) {
+        if (constructor == null || constructor.parameters.size > 1 || constructor.parameters
+                .first().type.classifier != Config::class
+        ) {
             return
         }
         val backend = constructor.call(load())
@@ -68,7 +75,8 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
             val cfgValue = backend.get<Any>(it)
             if (cfgValue != null && !values.containsKey(it.name)) {
                 values[it.name] = cfgValue
-                log.atFinest().log("Loaded Config Value: %s from %s", cfgKey, backend::class.simpleName)
+                log.atFinest()
+                    .log("Loaded Config Value: %s from %s", cfgKey, backend::class.simpleName)
             }
         }
     }

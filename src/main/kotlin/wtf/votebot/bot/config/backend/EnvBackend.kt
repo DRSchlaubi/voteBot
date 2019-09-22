@@ -42,7 +42,8 @@ class EnvBackend(private val config: Config) : ConfigBackend {
 
     @ExperimentalStdlibApi
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(property: KProperty1<Config, *>) = dotenv[prefix + property.findAnnotation<EnvKey>()?.key] as T
+    override fun <T> get(property: KProperty1<Config, *>) =
+        dotenv[prefix + property.findAnnotation<EnvKey>()?.key] as T
 
     override fun requirementsMet() = true // We don't have any special requirements.
 }

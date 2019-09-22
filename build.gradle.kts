@@ -123,7 +123,8 @@ tasks {
 
     pmdMain {
         ignoreFailures = true
-        ruleSetConfig = resources.text.fromFile(file("${rootProject.projectDir}/config/pmd/ruleset.xml"))
+        ruleSetConfig =
+            resources.text.fromFile(file("${rootProject.projectDir}/config/pmd/ruleset.xml"))
     }
 }
 
