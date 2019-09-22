@@ -19,19 +19,9 @@
 
 package wtf.votebot.bot.config
 
-/**
- * Changes the config key from the fields name to [value].
- */
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ConfigKey(val value: String)
-
-/**
- * Tells the [ConfigLoader] to not parse a field.
- */
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ConfigIgnore
+annotation class ConfigKey(val value: String)
 
 /**
  * Marks an option as required.
@@ -40,17 +30,3 @@ annotation class ConfigIgnore
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ConfigRequired
-
-/**
- * Tells the [ConfigLoader] to use this constructor when instancing the config backend.
- */
-@Target(AnnotationTarget.CONSTRUCTOR)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ConfigBackendConstructor
-
-/**
- * Tells the [ConfigLoader] that this can be the main config backend.
- */
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ConfigBackendLead

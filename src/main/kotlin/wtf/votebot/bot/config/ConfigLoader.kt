@@ -20,101 +20,64 @@
 package wtf.votebot.bot.config
 
 import wtf.votebot.bot.Logger
+import wtf.votebot.bot.config.backend.ConfigBackend
+import wtf.votebot.bot.exceptions.StartupError
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KVisibility
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.javaConstructor
+import kotlin.reflect.full.hasAnnotation
 
-class ConfigLoader(
-    configuration: KClass<Config>,
-    vararg backendClasses: KClass<out ConfigBackend>
-) {
+@ExperimentalStdlibApi
+class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
     private val log = Logger.forEnclosingClass()
-    private val values= mutableMapOf<String, Any>()
+    private val values = mutableMapOf<String, Any>()
 
     init {
-        val backends = instanceBackends(backendClasses)
-        val availableBackends: List<ConfigBackend> = backends.filter(ConfigBackend::requirementsMet).toList()
+        Config::class.declaredMemberProperties.forEach {
+            if (!it.hasAnnotation<ConfigKey>())
+                return@forEach
+            values[it.findAnnotation<ConfigKey>()?.value!!] = Unit
+        }
+        val backends = backendClasses.filter { it.hasAnnotation<ConfigBackend.Priority>() }.toMutableList()
+        backends.sortBy { it.findAnnotation<ConfigBackend.Priority>()?.priority }
 
-        if (availableBackends.isEmpty()) {
+        if (backends.isEmpty()) {
             log.atSevere().log("[CONFIG] No suitable configuration backends found see log above for reasons!")
-            TODO("Implement custom exception")
+            throw StartupError("No suitable configuration backends available.")
         }
 
-        log.atInfo().log("[CONFIG] Determined following suitable configurations backends: %s (%s)",
-            availableBackends.first(), // main backend
-            availableBackends.subList(1, availableBackends.size) // fallbacks
-        )
-
-        val configKeys = findConfigKeys(configuration).toMutableList()
-
-        val missingKeys = mutableListOf<String>()
-        for(key in configKeys) {
-            for (backend in availableBackends) {
-                values[key.name] = backend[key.name] ?: continue
-                break // End loop as value was set
-            }
-            if (!values.containsKey(key.name) and key.required) {
-                missingKeys.add(key.name)
-            }
-        }
-        log.atSevere().log("[CONFIG] No config backend could provide required config keys: %s!", missingKeys)
-        TODO("Implement custom exception")
+        backends.forEach(this::loadValuesFromBackendClass)
     }
 
-    // TODO: Find better implementation for this (Guice?)
-    fun buildConfig(): Config {
-        return ImmutableConfig::class.primaryConstructor!!.call(values.values.toTypedArray())
+    private fun loadValuesFromBackendClass(backendClass: KClass<out ConfigBackend>) {
+        val constructor = backendClass.constructors.firstOrNull()
+        if (constructor == null || constructor.parameters.size > 1 || constructor.parameters.first().type.classifier != Config::class) {
+            return
+        }
+        val backend = constructor.call(load())
+        if (!backend.requirementsMet())
+            return
+        Config::class.declaredMemberProperties.forEach {
+            if (!it.hasAnnotation<ConfigKey>())
+                return@forEach
+            val cfgKey = it.findAnnotation<ConfigKey>()?.value!!
+            val cfgValue = backend.get<Any>(it)
+            if (cfgValue != null && !values.containsKey(it.name)) {
+                values[it.name] = cfgValue
+                log.atFinest().log("Loaded Config Value: %s from %s", cfgKey, backend::class.simpleName)
+            }
+        }
     }
 
-    private fun instanceBackends(backendClasses: Array<out KClass<out ConfigBackend>>): List<ConfigBackend> {
-        fun validateConstructor(constructor: KFunction<ConfigBackend>): Boolean { // The only allowed parameter is for the mainBackend (ConfigBackend)
-            if (constructor.parameters.isEmpty()) {
-                return false
+    fun load(): Config {
+        val config = DefaultConfig()
+        config::class.declaredMemberProperties.forEach {
+            if (it is KMutableProperty<*>) {
+                if (values.containsKey(it.name))
+                    it.setter.call(config, values[it.name])
             }
-
-            if (constructor.parameters.first().type.classifier != ConfigBackend::class) {
-                return false
-            }
-            return true
         }
-        val constructors = backendClasses
-            .asSequence()
-            .mapNotNull {
-                it.constructors
-                    .firstOrNull { constructor -> constructor.findAnnotation<ConfigBackendConstructor>() != null } // Search @ConfigBackendConstructor
-                    ?: it.primaryConstructor // Error
-            }
-            .filter(::validateConstructor)
-        val mainConstructor = constructors.firstOrNull() ?: return emptyList()
-
-        if (!mainConstructor.javaConstructor!!.declaringClass.isAnnotationPresent(ConfigBackendLead::class.java)) {
-            log.atSevere().log("[CONFIG] It seems like there is no main backend! See log above for errors!")
-            TODO("Implement custom exception")
-        }
-        val mainBackend = mainConstructor.call(null)
-        return constructors
-            .drop(1) // Drop mainConstructor
-            .map {
-                it.call(mainBackend)
-            } // Build backends
-            .plus(mainBackend)
-            .toList()
-
+        return config
     }
-
-    private fun findConfigKeys(configuration: KClass<Config>) = configuration.declaredMemberProperties
-            .asSequence()
-            .filter { (it.visibility == KVisibility.PUBLIC) and (it.findAnnotation<ConfigIgnore>() == null) } // filter out non public or ignored keys
-            .map {
-                val name = it.findAnnotation<ConfigKey>()?.value ?: it.name
-                val required = it.findAnnotation<ConfigRequired>() != null
-                ConfigEntry(name, required)
-            } // Search for annotations
-            .toList() //Grab results
 }
-
-private data class ConfigEntry(val name: String, val required: Boolean)

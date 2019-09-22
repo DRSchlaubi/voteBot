@@ -19,15 +19,54 @@
 
 package wtf.votebot.bot.config
 
-import wtf.votebot.bot.config_2.Environment
+import wtf.votebot.bot.config.backend.EnvKey
+import wtf.votebot.bot.config.backend.VaultKey
 
 interface Config {
-    @ConfigRequired
+    /**
+     * The current environment this application
+     * is running in.
+     */
+    @ConfigKey("ENVIRONMENT")
+    @EnvKey("ENVIRONMENT")
     val environment: String
+
+    @ConfigKey("VAULT_ADDRESS")
+    @EnvKey("VAULT_ADDRESS")
+    val vaultAddress: String
+
+    @ConfigRequired
+    @ConfigKey("VAULT_TOKEN")
+    @EnvKey("VAULT_TOKEN")
+    val vaultToken: String?
+
+    @ConfigKey("VAULT_PATH")
+    @EnvKey("VAULT_PATH")
+    val vaultPath: String
+
+    /**
+     * The [Sentry](http://sentry.io/) DSN.
+     */
+    @ConfigKey("SENTRY_DSN")
+    @EnvKey("SENTRY_DSN")
+    @VaultKey("sentry_dsn")
     val sentryDSN: String?
+
+    /**
+     * The Discord token this application
+     * should use.
+     */
     @ConfigRequired
-    val discordToken: String
-    @ConfigRequired
+    @ConfigKey("DISCORD_TOKEN")
+    @EnvKey("DISCORD_TOKEN")
+    @VaultKey("discord_token")
+    val discordToken: String?
+
+    /**
+     * The HTTP port the embedded WebServer should use.
+     */
+    @ConfigKey("HTTP_PORT")
+    @EnvKey("HTTP_PORT")
     val httpPort: String
 
 
@@ -44,7 +83,7 @@ interface Config {
     /**
      * @return true if the current environment is a production environment.
      */
-    fun isProduction() = environmentType() == Environment.PRODUCTION
+    fun isProduction() = environmentType() == Environment.PRODUCTION || !isDevelopment() && !isStaging()
 
     /**
      * @return the application [Environment].

@@ -17,33 +17,36 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config_2
+package wtf.votebot.bot.config.backend
 
 import com.bettercloud.vault.Vault
 import com.bettercloud.vault.VaultConfig
+import wtf.votebot.bot.config.Config
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.findAnnotation
 
-class VaultConfig(
-    token: String,
-    kvPath: String,
-    address: String
-) {
+@ConfigBackend.Priority(1)
+class VaultBackend(
+    private val config: Config
+) : ConfigBackend {
 
     private val vault = Vault(
         VaultConfig()
-            .address(address)
-            .token(token)
+            .address(config.vaultAddress)
+            .token(config.vaultToken)
             .build()
     )
 
-    val discordToken: String?
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> get(property: KProperty1<Config, *>) =
+        vault.logical().read(config.vaultPath + property.findAnnotation<VaultKey>()?.key).data[config.environmentType().key] as T
 
-    init {
-        val listRes = vault.logical().list(kvPath)
-        println(listRes)
-        val res = vault.logical().read(kvPath)
-        val body = res.restResponse.body.toString(Charsets.UTF_8)
-        println(vault.logical().write(kvPath, mutableMapOf<String, Any>("abc" to "adawd")).data)
-        discordToken = vault.logical().read(kvPath).data["discord_token"]
-    }
-    val sentryDSN: String? = vault.logical().read(kvPath).data["sentry_dsn"]
+    override fun requirementsMet() = !config.isDevelopment()
 }
+
+/**
+ * The key of the environment variables.
+ */
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class VaultKey(val key: String)

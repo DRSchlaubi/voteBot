@@ -17,23 +17,27 @@
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
 
-package wtf.votebot.bot.config
+package wtf.votebot.bot.config.backend
+
+import wtf.votebot.bot.config.Config
+import kotlin.reflect.KProperty1
 
 interface ConfigBackend {
 
     /**
-     * @return the value corresponding to the [key] or ```null``` if the key is not set.
+     * @return the value of the matching backend data or ```null``` if the key is not set.
      */
-    operator fun <T> get(key: String): T?
-
-    /**
-     * @return the value corresponding to the [key] or [default] if the key is not set.
-     * @see ConfigBackend.get
-     */
-    fun <T> getOrDefault(key: String, default: T) = get(key) ?: default
+    operator fun <T> get(property: KProperty1<Config, *>): T?
 
     /**
      * @return whether this config backend is currently usable or not.
      */
     fun requirementsMet(): Boolean
+
+    /**
+     * Enables the loading of [ConfigBackend]s in a particular order.
+     */
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class Priority(val priority: Int)
 }

@@ -19,11 +19,13 @@
 
 package wtf.votebot.bot.config
 
-import java.util.*
+class DefaultConfig : Config {
 
-class ImmutableConfig(
-    override val environment: String,
-    override val sentryDSN: String?,
-    override val discordToken: String,
-    override val httpPort: String
-) : Config
+    override var environment: String = Environment.PRODUCTION.key
+    override var sentryDSN: String? = null
+    override var discordToken: String? = null
+    override var httpPort: String = "3245"
+    override val vaultAddress: String = "http://127.0.0.1:8200"
+    override val vaultToken: String? = null
+    override val vaultPath: String = "votebot/"
+}
