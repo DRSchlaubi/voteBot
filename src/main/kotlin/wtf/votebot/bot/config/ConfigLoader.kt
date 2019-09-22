@@ -63,13 +63,13 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         val backend = constructor.call(load())
         if (!backend.requirementsMet())
             return
-        Config::class.declaredMemberProperties.forEach {
-            if (!it.hasAnnotation<ConfigKey>())
-                return@forEach
-            val cfgKey = it.findAnnotation<ConfigKey>()?.value
-            val cfgValue = backend.get<Any>(it)
-            if (cfgValue != null && !values.containsKey(it.name)) {
-                values[it.name] = cfgValue
+        for (property in Config::class.declaredMemberProperties) {
+            if (!property.hasAnnotation<ConfigKey>())
+                continue
+            val cfgKey = property.findAnnotation<ConfigKey>()?.value
+            val cfgValue = backend.get<Any>(property)
+            if (cfgValue != null && !values.containsKey(property.name)) {
+                values[property.name] = cfgValue
                 log.atFinest()
                     .log("Loaded Config Value: %s from %s", cfgKey, backend::class.simpleName)
             }
