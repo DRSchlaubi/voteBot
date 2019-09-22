@@ -24,8 +24,12 @@ import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.DefaultHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.request.ApplicationRequest
+import io.ktor.response.respondTextWriter
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.prometheus.client.CollectorRegistry
+import io.prometheus.client.exporter.common.TextFormat
 
 /**
  * Configuration for Ktor.
@@ -37,5 +41,19 @@ fun Application.module() {
         get("/") {
             context.response.status(HttpStatusCode.OK)
         }
+        get("/metrics") {
+            context.response.status(HttpStatusCode.OK)
+            context.respondTextWriter {
+                TextFormat.write004(
+                    this, CollectorRegistry.defaultRegistry
+                        .filteredMetricFamilySamples(parse(context.request))
+                )
+            }
+        }
     }
+}
+
+private fun parse(req: ApplicationRequest): Set<String> {
+    val includedParam = req.queryParameters["name[]"]
+    return if (includedParam == null) emptySet<String>() else setOf(includedParam)
 }
