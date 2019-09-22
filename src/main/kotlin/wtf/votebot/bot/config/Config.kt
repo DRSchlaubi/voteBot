@@ -69,7 +69,6 @@ interface Config {
     @EnvKey("HTTP_PORT")
     val httpPort: String
 
-
     /**
      * @return true if the current environment is a development environment.
      */

@@ -77,7 +77,6 @@ fun main(args: Array<String>) {
     Sentry.getStoredClient().release = ApplicationInfo.RELEASE
 
     // WebServer
-    // TODO: Extract variable and pass around
     embeddedServer(Netty, config.httpPort.toInt(), module = Application::module).start()
 
     // Service Registry
