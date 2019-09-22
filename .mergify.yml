@@ -1,0 +1,17 @@
+pull_request_rules:
+  - name: Automatic merge
+    conditions:
+      - base=master
+      - "#approved-reviews-by>=1"
+      - "#review-requested=0"
+      - "#changes-requested-reviews-by=0"
+      - "#commented-reviews-by=0"
+      - status-success=continuous-integration/travis-ci/pr
+      - status-success=continuous-integration/travis-ci/push
+      - status-success=WIP
+      - status-success=Codacy/PR Quality Review
+    actions:
+      merge:
+        strict: true
+        method: squash
+      delete_head_branch: {}
