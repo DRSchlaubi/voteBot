@@ -30,11 +30,7 @@ import kotlin.reflect.full.findAnnotation
 @ConfigBackend.Priority(0)
 class EnvBackend(private val config: Config) : ConfigBackend {
 
-    /**
-     * The prefix in front of the environment variable keys.
-     *
-     * Example: BOT_SENTRY_DSN
-     */
+    // Prefix in front of the environment variable keys. Ex: BOT_DISCORD_TOKEN
     private val prefix = "BOT_"
 
     private val dotenv by lazy {
