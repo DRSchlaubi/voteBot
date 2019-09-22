@@ -69,7 +69,7 @@ fun main(args: Array<String>) {
     }
 
     val configLoader = ConfigLoader(EnvBackend::class, VaultBackend::class)
-    val config = configLoader.load()
+    val config = configLoader.build()
 
     // Initialize Sentry
     Sentry.init(config.sentryDSN)

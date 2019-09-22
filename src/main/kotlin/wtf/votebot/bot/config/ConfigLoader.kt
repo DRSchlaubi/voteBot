@@ -76,11 +76,7 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         }
     }
 
-    /**
-     * Loads the config.
-     * @return the loaded [Config]
-     */
-    fun load(): Config {
+    private fun load(): Config {
         val config = DefaultConfig()
         config::class.declaredMemberProperties.forEach {
             if (it is KMutableProperty<*>) {
@@ -89,5 +85,21 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
             }
         }
         return config
+    }
+
+    /**
+     * Loads and builds the config.
+     * @return the loaded [Config]
+     */
+    fun build(): Config {
+        for (property in Config::class.declaredMemberProperties) {
+            if (!property.hasAnnotation<ConfigKey>() || !property.hasAnnotation<ConfigRequired>())
+                continue
+            val cfgKey = property.findAnnotation<ConfigKey>()?.value
+            if (!values.containsKey(cfgKey)) {
+                log.atSevere().log("Could not find required config key: %s", cfgKey)
+            }
+        }
+        return load()
     }
 }
