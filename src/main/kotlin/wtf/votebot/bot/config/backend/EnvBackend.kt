@@ -24,6 +24,9 @@ import wtf.votebot.bot.config.Config
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 
+/**
+ * Loads data from an .env file or from environment variables.
+ */
 @ConfigBackend.Priority(0)
 class EnvBackend(private val config: Config) : ConfigBackend {
 

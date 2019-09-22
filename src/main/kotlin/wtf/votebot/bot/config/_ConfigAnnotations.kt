@@ -19,6 +19,10 @@
 
 package wtf.votebot.bot.config
 
+/**
+ * Applies an key to this property
+ * that is used to identify this config value.
+ */
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ConfigKey(val value: String)

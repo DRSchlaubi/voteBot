@@ -28,6 +28,9 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
+/**
+ * Loads and combines the data of multiple [ConfigBackend]s.
+ */
 @ExperimentalStdlibApi
 class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
     private val log = Logger.forEnclosingClass()
@@ -70,6 +73,10 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         }
     }
 
+    /**
+     * Loads the config.
+     * @return the loaded [Config]
+     */
     fun load(): Config {
         val config = DefaultConfig()
         config::class.declaredMemberProperties.forEach {

@@ -26,6 +26,10 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
+/**
+ * [AbstractModule] implementation that provides config values
+ * for usage in an [com.google.inject.Injector].
+ */
 @ExperimentalStdlibApi
 class ConfigModule(private val config: Config) : AbstractModule() {
 

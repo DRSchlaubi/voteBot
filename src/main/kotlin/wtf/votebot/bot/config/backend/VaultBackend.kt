@@ -25,6 +25,9 @@ import wtf.votebot.bot.config.Config
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 
+/**
+ * Loads data from [Vault](https://www.vaultproject.io/).
+ */
 @ConfigBackend.Priority(1)
 class VaultBackend(
     private val config: Config

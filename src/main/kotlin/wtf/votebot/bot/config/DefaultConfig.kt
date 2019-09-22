@@ -19,6 +19,9 @@
 
 package wtf.votebot.bot.config
 
+/**
+ * Default [Config] implementation with default data.
+ */
 class DefaultConfig : Config {
 
     override var environment: String = Environment.PRODUCTION.key

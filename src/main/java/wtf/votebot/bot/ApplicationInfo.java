@@ -20,7 +20,7 @@
 package wtf.votebot.bot;
 
 /**
- * ApplicationInfo provides general information about this service.
+ * ApplicationInfo provides general information about this application.
  * The RELEASE variable gets set by Gradle.
  */
 public class ApplicationInfo {

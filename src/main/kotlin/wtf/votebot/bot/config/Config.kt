@@ -24,17 +24,22 @@ import wtf.votebot.bot.config.backend.VaultKey
 
 interface Config {
     /**
-     * The current environment this application
-     * is running in.
+     * Current environment this application is running in.
      */
     @ConfigKey("ENVIRONMENT")
     @EnvKey("ENVIRONMENT")
     val environment: String
 
+    /**
+     * Address of the vault instance.
+     */
     @ConfigKey("VAULT_ADDRESS")
     @EnvKey("VAULT_ADDRESS")
     val vaultAddress: String
 
+    /**
+     * Vault access token.
+     */
     @ConfigRequired
     @ConfigKey("VAULT_TOKEN")
     @EnvKey("VAULT_TOKEN")
@@ -45,7 +50,7 @@ interface Config {
     val vaultPath: String
 
     /**
-     * The [Sentry](http://sentry.io/) DSN.
+     * [Sentry](http://sentry.io/) DSN.
      */
     @ConfigKey("SENTRY_DSN")
     @EnvKey("SENTRY_DSN")
@@ -53,8 +58,7 @@ interface Config {
     val sentryDSN: String?
 
     /**
-     * The Discord token this application
-     * should use.
+     * Discord token of the bot.
      */
     @ConfigRequired
     @ConfigKey("DISCORD_TOKEN")
@@ -63,7 +67,7 @@ interface Config {
     val discordToken: String?
 
     /**
-     * The HTTP port the embedded WebServer should use.
+     * HTTP port of the embedded WebServer.
      */
     @ConfigKey("HTTP_PORT")
     @EnvKey("HTTP_PORT")

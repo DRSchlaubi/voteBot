@@ -22,10 +22,18 @@ package wtf.votebot.bot.config.backend
 import wtf.votebot.bot.config.Config
 import kotlin.reflect.KProperty1
 
+/**
+ * ConfigBackend enables loading configuration
+ * data from multiple data sources.
+ *
+ * Implementations are:
+ * - [EnvBackend]
+ * - [VaultBackend]
+ */
 interface ConfigBackend {
 
     /**
-     * @return the value of the matching backend data or ```null``` if the key is not set.
+     * @return the value of the matchin data or ```null``` if the key is not set.
      */
     operator fun <T> get(property: KProperty1<Config, *>): T?
 
