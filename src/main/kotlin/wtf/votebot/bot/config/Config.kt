@@ -69,7 +69,6 @@ interface Config {
     /**
      * HTTP port of the embedded WebServer.
      */
-    @ConfigRequired
     @ConfigKey("HTTP_PORT")
     @EnvKey("HTTP_PORT")
     val httpPort: String

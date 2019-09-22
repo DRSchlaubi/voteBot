@@ -39,6 +39,7 @@ class ServiceRegistry(serviceName: String, httpPort: String) {
         val service = ImmutableRegistration.builder()
             .id(serviceName)
             .name(serviceName)
+            .check(Registration.RegCheck.ttl(3))
             .check(Registration.RegCheck.http("http://localhost:$httpPort", 5L))
             .build()
         agentClient.register(service)
