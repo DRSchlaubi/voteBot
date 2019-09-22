@@ -40,7 +40,7 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         Config::class.declaredMemberProperties.forEach {
             if (!it.hasAnnotation<ConfigKey>())
                 return@forEach
-            values[it.findAnnotation<ConfigKey>()?.value!!] = Unit
+            values[it.findAnnotation<ConfigKey>()!!.value] = Unit
         }
         val backends = backendClasses.filter { it.hasAnnotation<ConfigBackend.Priority>() }.toMutableList()
         backends.sortBy { it.findAnnotation<ConfigBackend.Priority>()?.priority }
