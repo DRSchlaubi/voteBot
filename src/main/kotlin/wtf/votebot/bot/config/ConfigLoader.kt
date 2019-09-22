@@ -103,9 +103,7 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
                 error = true
             }
         }
-        if (error) {
-            throw ConfigurationError("Incomplete configuration. See errors above.")
-        }
+        if (error) throw ConfigurationError("Incomplete configuration. See errors above.")
         return load()
     }
 }
