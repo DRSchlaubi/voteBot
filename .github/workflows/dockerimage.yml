@@ -12,8 +12,8 @@ jobs:
     - name: Checkout Project 
       uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker.pkg.github.com/votebot/votebot/bot:$(date +%s)
+      run: docker build . --file Dockerfile --tag docker.pkg.github.com/votebot/votebot/bot:${{ github.sha }}
     - name: Login to Docker Registry
       run: docker login docker.pkg.github.com --username Votebot -p ${{ secrets.DOCKER_TOKEN }}
     - name: Push Docker Image
-      run: docker push docker.pkg.github.com/votebot/votebot/bot:$(date +%s)
+      run: docker push docker.pkg.github.com/votebot/votebot/bot:${{ github.sha }}
