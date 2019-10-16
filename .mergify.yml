@@ -6,8 +6,7 @@ pull_request_rules:
       - "#review-requested=0"
       - "#changes-requested-reviews-by=0"
       - "#commented-reviews-by=0"
-      - status-success=continuous-integration/travis-ci/pr
-      - status-success=continuous-integration/travis-ci/push
+      - status-success=Java CI / build (push)
       - status-success=WIP
       - status-success=Codacy/PR Quality Review
     actions:
