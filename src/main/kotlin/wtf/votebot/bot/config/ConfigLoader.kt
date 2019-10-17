@@ -81,8 +81,11 @@ class ConfigLoader(vararg backendClasses: KClass<out ConfigBackend>) {
         val config = DefaultConfig()
         config::class.declaredMemberProperties.forEach {
             if (it is KMutableProperty<*>) {
-                if (values.containsKey(it.name))
+                if (values.containsKey(it.name)) {
                     it.setter.call(config, values[it.name])
+                    log.atFinest()
+                        .log("Applied Config Value: %s", it.name)
+                }
             }
         }
         return config

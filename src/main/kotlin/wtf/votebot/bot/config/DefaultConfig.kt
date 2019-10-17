@@ -28,7 +28,7 @@ class DefaultConfig : Config {
     override var sentryDSN: String? = null
     override var discordToken: String? = null
     override var httpPort: String = "3245"
-    override val vaultAddress: String = "http://127.0.0.1:8200"
-    override val vaultToken: String? = null
-    override val vaultPath: String = "votebot/"
+    override var vaultAddress: String = "http://127.0.0.1:8200"
+    override var vaultToken: String? = null
+    override var vaultPath: String = "votebot/"
 }
