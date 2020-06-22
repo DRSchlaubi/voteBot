@@ -19,6 +19,10 @@
 
 package wtf.votebot.bot.core
 
+import discord4j.core.DiscordClient
+import discord4j.core.DiscordClientBuilder
+import discord4j.core.`object`.presence.Presence
+import discord4j.core.shard.ShardingClientBuilder
 import wtf.votebot.bot.config.Config
 
 /**
@@ -26,6 +30,11 @@ import wtf.votebot.bot.config.Config
  */
 class VoteBot(private val config: Config) {
     init {
+        ShardingClientBuilder(config.discordToken!!).build()
+            .map { it.setInitialPresence(Presence.invisible()) }
+            .map(DiscordClientBuilder::build)
+            .flatMap(DiscordClient::login)
+            .blockLast()
         Runtime.getRuntime().addShutdownHook(Thread(this::shutdown))
     }
 
